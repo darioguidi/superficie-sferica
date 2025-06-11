@@ -1,5 +1,8 @@
 #include "function.h"
 
+float phi = 0.0f;
+float theta = 0.0f;
+
 int main(void)
 {
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -44,14 +47,33 @@ int main(void)
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_QUIT){
                 printf("Chiusura del programma\n");
-                running=0;
+                running = 0;
+            }
+            // Esempio di rotazione:
+            else if(event.type == SDL_KEYDOWN){
+                if(event.key.keysym.sym == SDLK_LEFT) theta -= 0.1f;
+                if(event.key.keysym.sym == SDLK_RIGHT) theta += 0.1f;
+                if(event.key.keysym.sym == SDLK_UP) phi -= 0.1f;
+                if(event.key.keysym.sym == SDLK_DOWN) phi += 0.1f;
+                if(event.key.keysym.sym == SDLK_LEFT && event.key.keysym.sym == SDLK_DOWN){
+                    theta -=0.1f;
+                    phi +=0.1f;
+                } 
+                if(event.key.keysym.sym == SDLK_UP && event.key.keysym.sym == SDLK_RIGHT){
+                    theta += 0.1f;
+                    phi -= 0.1f;
+                } 
+                if(event.key.keysym.sym == SDLK_LEFT && event.key.keysym.sym == SDLK_DOWN){
+                    theta -=0.1f;
+                    phi +=0.1f;
+                } 
             }
         }
 
-        SDL_SetRenderDrawColor(renderer,0,0,0,0);
+        SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderClear(renderer);
-        SDL_DrawSurface(renderer, number_points);
-
+        DrawSurface(renderer, number_points, phi, theta);
+        SDL_RenderPresent(renderer);
     }
 
     SDL_DestroyRenderer(renderer);
