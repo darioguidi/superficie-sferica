@@ -3,6 +3,9 @@
 float phi = 0.0f;
 float theta = 0.0f;
 
+float phi_plane = 0.0f;
+float theta_plane = 0.0f;
+
 int main(void)
 {
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -35,10 +38,15 @@ int main(void)
         return 1;
     }
 
-    int number_points;
-    printf("Quanti punti devono rappresentare la superficie sferica? \n");
-    scanf("%d", &number_points);
+    int number_points_sphere, length_plane;
+    float radius;
 
+    printf("Quanti punti devono rappresentare la superficie sferica? \n");
+    scanf("%d", &number_points_sphere);
+    printf("Inserire raggio della sfera\n");
+    scanf("%f", &radius);
+    printf("Quanto deve essere grande il tuo piano?\n");
+    scanf("%d", &length_plane);
 
     int running = 1;
     SDL_Event event;
@@ -72,7 +80,8 @@ int main(void)
 
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderClear(renderer);
-        DrawSurface(renderer, number_points, phi, theta);
+        DrawSurface(renderer, number_points_sphere, radius);
+        DrawPlane(renderer, length_plane);
         SDL_RenderPresent(renderer);
     }
 

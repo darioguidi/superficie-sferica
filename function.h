@@ -24,4 +24,5 @@ typedef struct {
 } Point;
 
 void DrawPoint(SDL_Renderer *renderer, Point *point);
-void DrawSurface(SDL_Renderer *renderer, int number_points, float phi, float theta);
+void DrawSurface(SDL_Renderer *renderer, int number_points, float radius);
+void DrawPlane(SDL_Renderer *renderer, int number_points);
