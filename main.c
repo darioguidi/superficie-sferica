@@ -6,6 +6,10 @@ float theta = 0.0f;
 float phi_plane = 0.0f;
 float theta_plane = 0.0f;
 
+float theta_plane_x = 0.0f;
+
+float theta_plane_z = 0.0f;
+
 int main(void)
 {
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -75,6 +79,22 @@ int main(void)
                     theta -=0.1f;
                     phi +=0.1f;
                 } 
+
+                // Rotazione piano asse X
+                if(event.key.keysym.sym == SDLK_a){   // A per ruotare piano attorno a X negativa
+                    theta_plane_x -= 0.1f;
+                }
+                if(event.key.keysym.sym == SDLK_d){   // D per ruotare piano attorno a X positiva
+                    theta_plane_x += 0.1f;
+                }
+
+                // Rotazione piano asse Z (aggiunta)
+                if(event.key.keysym.sym == SDLK_w){   // W per ruotare piano attorno a Z positiva
+                    theta_plane_z += 0.1f;
+                }
+                if(event.key.keysym.sym == SDLK_s){   // S per ruotare piano attorno a Z negativa
+                    theta_plane_z -= 0.1f;
+                }
             }
         }
 

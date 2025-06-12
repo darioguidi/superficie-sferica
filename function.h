@@ -17,6 +17,15 @@
 extern float phi;
 extern float theta;
 
+extern float phi_plane_x;
+extern float theta_plane_x;
+
+extern float phi_plane_y;
+extern float theta_plane_y;
+
+extern float phi_plane_z;
+extern float theta_plane_z;
+
 typedef struct {
     float x;
     float y;
