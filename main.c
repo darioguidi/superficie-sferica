@@ -42,15 +42,19 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    int number_points_sphere, length_plane;
+    int length_plane, step;
     float radius;
 
     printf("Quanti punti devono rappresentare la superficie sferica? \n");
-    scanf("%d", &number_points_sphere);
+    scanf("%d", &step);
     printf("Inserire raggio della sfera\n");
     scanf("%f", &radius);
     printf("Quanto deve essere grande il tuo piano?\n");
     scanf("%d", &length_plane);
+
+    Point *plane = malloc((4 * length_plane) * sizeof(Point));
+    int number_points_sphere = step * step; 
+    Point *surface = malloc(number_points_sphere * sizeof(Point));
 
     int running = 1;
     SDL_Event event;
@@ -107,11 +111,18 @@ int main(int argc, char *argv[])
 
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderClear(renderer);
-        DrawSurface(renderer, number_points_sphere, radius, phi_sphere, theta_sphere);
-        DrawPlane(renderer, length_plane, theta_plane_x, theta_plane_y, theta_plane_z);
+
+        DrawSurface(renderer, surface, step, radius, phi_sphere, theta_sphere);
+        DrawPlane(renderer, plane, length_plane, theta_plane_x, theta_plane_y, theta_plane_z);
+
+        phi_sphere+=0.0005f;
+        theta_sphere+=0.0005f;
+
         SDL_RenderPresent(renderer);
     }
 
+    free(plane);
+    free(surface);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

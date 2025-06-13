@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define SCREEN_WIDTH 700
-#define SCREEN_HEIGHT 700
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 800
 #define SCREEN_OFFSET_X SCREEN_WIDTH/2
 #define SCREEN_OFFSET_Y SCREEN_HEIGHT/2
 #define SIZE_POINT 2
@@ -28,5 +28,6 @@ typedef struct {
 } Point;
 
 void DrawPoint(SDL_Renderer *renderer, Point *point);
-void DrawSurface(SDL_Renderer *renderer, int number_points, float radius, float phi_sphere, float theta_sphere);
-void DrawPlane(SDL_Renderer *renderer,int length, float theta_plane_x, float theta_plane_y, float theta_plane_z);
+void DrawPointPlane(SDL_Renderer *renderer, Point *point);
+void DrawSurface(SDL_Renderer *renderer, Point *surface, int step, float radius, float phi_sphere, float theta_sphere);
+void DrawPlane(SDL_Renderer *renderer,Point *plane, int length, float theta_plane_x, float theta_plane_y, float theta_plane_z);

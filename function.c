@@ -15,36 +15,61 @@ void DrawPoint(SDL_Renderer *renderer, Point *point)
     SDL_RenderFillRect(renderer, &rect);
 }
 
-void DrawSurface(SDL_Renderer *renderer, int step, float radius, float phi_sphere, float theta_sphere)
+void DrawPointPlane(SDL_Renderer *renderer, Point *point)
 {
-    int number_points = step * step;
-    Point *surface = malloc(number_points * sizeof(Point));
-    if (!surface) return; // sempre bene controllare
+    float focal_length = 200.0f;
+    float z = point->z + focal_length;
+
+    if (z <= 0) return;
+
+    int screen_x = (int)((point->x * focal_length) / z) + SCREEN_WIDTH / 2;
+    int screen_y = (int)((-point->y * focal_length) / z) + SCREEN_HEIGHT / 2;
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    SDL_Rect rect = (SDL_Rect){screen_x, screen_y, SIZE_POINT, SIZE_POINT};
+    SDL_RenderFillRect(renderer, &rect);
+}
+
+void DrawSurface(SDL_Renderer *renderer, Point *surface, int step, float radius, float phi_sphere, float theta_sphere)
+{
+    if (!surface) return;
 
     Point center = {0.0f, 0.0f, 300.0f};
 
     int i = 0;
     for (int t = 0; t < step; t++) {
-        float theta = ((float)t / (step - 1)) * PI + theta_sphere;
-
+        float theta = ((float)t / (step - 1)) * PI;    // da 0 a π
         for (int p = 0; p < step; p++) {
-            float phi = ((float)p / (step - 1)) * 2 * PI + phi_sphere;
+            float phi = ((float)p / (step - 1)) * 2 * PI;  // da 0 a 2π
 
-            surface[i].x = center.x + radius * sinf(theta) * cosf(phi);
-            surface[i].y = center.y + radius * sinf(theta) * sinf(phi);
-            surface[i].z = center.z + radius * cosf(theta);
+            // Coordinate sulla sfera non ruotate
+            float x = radius * sinf(theta) * cosf(phi);
+            float y = radius * sinf(theta) * sinf(phi);
+            float z = radius * cosf(theta);
+
+            // Ruotiamo attorno all'asse X (theta_sphere)
+            float y_rot = y * cosf(theta_sphere) - z * sinf(theta_sphere);
+            float z_rot = y * sinf(theta_sphere) + z * cosf(theta_sphere);
+            float x_rot = x;
+
+            // Ruotiamo attorno all'asse Y (phi_sphere)
+            float x_rot2 = x_rot * cosf(phi_sphere) + z_rot * sinf(phi_sphere);
+            float y_rot2 = y_rot;
+            float z_rot2 = -x_rot * sinf(phi_sphere) + z_rot * cosf(phi_sphere);
+
+            surface[i].x = center.x + x_rot2;
+            surface[i].y = center.y + y_rot2;
+            surface[i].z = center.z + z_rot2;
 
             DrawPoint(renderer, &surface[i]);
             i++;
         }
     }
-    free(surface);
 }
 
 
-void DrawPlane(SDL_Renderer *renderer,int length, float theta_plane_x, float theta_plane_y, float theta_plane_z)
+void DrawPlane(SDL_Renderer *renderer,Point *plane, int length, float theta_plane_x, float theta_plane_y, float theta_plane_z)
 {
-    Point *plane = malloc((4 * length) * sizeof(Point));
     float offset = length / 2.0f;
 
     // Centro del piano nello spazio 3D (centrato e davanti alla camera)
@@ -110,10 +135,8 @@ void DrawPlane(SDL_Renderer *renderer,int length, float theta_plane_x, float the
 
     // Disegno dopo aver trasformato i punti
     for (int i = 0; i < 4 * length; i++) {
-        DrawPoint(renderer, &plane[i]);
+        DrawPointPlane(renderer, &plane[i]);
     }
-
-    free(plane);
 }
 
 /*
