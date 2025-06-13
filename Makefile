@@ -1,16 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2
 
-# Rileva sistema operativo e setta LDFLAGS di conseguenza
 ifeq ($(OS),Windows_NT)
-    # Windows (MinGW)
     LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lm
-    RM = del /Q
 else
-    # Linux / Unix
     LDFLAGS = -lSDL2 -lm
-    RM = rm -f
 endif
+
+RM = rm -f
 
 SRC = main.c function.c
 OBJ = $(SRC:.c=.o)
@@ -26,3 +23,5 @@ $(TARGET): $(OBJ)
 
 clean:
 	$(RM) $(OBJ) $(TARGET)
+
+.PHONY: all clean

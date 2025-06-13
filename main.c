@@ -7,11 +7,13 @@ float phi_plane = 0.0f;
 float theta_plane = 0.0f;
 
 float theta_plane_x = 0.0f;
-
 float theta_plane_z = 0.0f;
 
-int main(void)
+int main(int argc, char *argv[])
 {
+    (void)argc;
+    (void)argv;
+    
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Errore creazione del sdl\n");
         return 1;
