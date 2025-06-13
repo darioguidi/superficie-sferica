@@ -14,16 +14,11 @@
 #define RADIUS_C = 20
 #define PI 3.14f
 
-extern float phi;
-extern float theta;
+extern float phi_sphere;
+extern float theta_sphere;
 
-extern float phi_plane_x;
 extern float theta_plane_x;
-
-extern float phi_plane_y;
 extern float theta_plane_y;
-
-extern float phi_plane_z;
 extern float theta_plane_z;
 
 typedef struct {
@@ -33,5 +28,5 @@ typedef struct {
 } Point;
 
 void DrawPoint(SDL_Renderer *renderer, Point *point);
-void DrawSurface(SDL_Renderer *renderer, int number_points, float radius);
-void DrawPlane(SDL_Renderer *renderer, int number_points);
+void DrawSurface(SDL_Renderer *renderer, int number_points, float radius, float phi_sphere, float theta_sphere);
+void DrawPlane(SDL_Renderer *renderer,int length, float theta_plane_x, float theta_plane_y, float theta_plane_z);

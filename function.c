@@ -15,35 +15,34 @@ void DrawPoint(SDL_Renderer *renderer, Point *point)
     SDL_RenderFillRect(renderer, &rect);
 }
 
-void DrawSurface(SDL_Renderer *renderer, int number_points, float radius)
+void DrawSurface(SDL_Renderer *renderer, int step, float radius, float phi_sphere, float theta_sphere)
 {
+    int number_points = step * step;
     Point *surface = malloc(number_points * sizeof(Point));
+    if (!surface) return; // sempre bene controllare
 
-    // Centro della sfera nello spazio 3D (centrato e distante dalla camera)
     Point center = {0.0f, 0.0f, 300.0f};
 
-    float offset = 2.0f / number_points;
-    float increment = PI * (3.0f - sqrt(5.0f)); // Distribuzione Fibonacci
+    int i = 0;
+    for (int t = 0; t < step; t++) {
+        float theta = ((float)t / (step - 1)) * PI + theta_sphere;
 
-    for (int i = 0; i < number_points; i++) {
-        float y = ((i * offset) - 1.0f) + (offset / 2.0f);
-        float r = sqrt(1.0f - y * y);
-        float theta = i * increment;
+        for (int p = 0; p < step; p++) {
+            float phi = ((float)p / (step - 1)) * 2 * PI + phi_sphere;
 
-        float x = r * cosf(theta);
-        float z = r * sinf(theta);
+            surface[i].x = center.x + radius * sinf(theta) * cosf(phi);
+            surface[i].y = center.y + radius * sinf(theta) * sinf(phi);
+            surface[i].z = center.z + radius * cosf(theta);
 
-        surface[i].x = center.x + radius * x;
-        surface[i].y = center.y + radius * y;
-        surface[i].z = center.z + radius * z;
-
-        DrawPoint(renderer, &surface[i]);
+            DrawPoint(renderer, &surface[i]);
+            i++;
+        }
     }
-
     free(surface);
 }
 
-void DrawPlane(SDL_Renderer *renderer, int length)
+
+void DrawPlane(SDL_Renderer *renderer,int length, float theta_plane_x, float theta_plane_y, float theta_plane_z)
 {
     Point *plane = malloc((4 * length) * sizeof(Point));
     float offset = length / 2.0f;
@@ -52,12 +51,11 @@ void DrawPlane(SDL_Renderer *renderer, int length)
     Point center = {0.0f, 0.0f, 300.0f};
     int index = 0;
 
-    // Bordi del piano
+    // Bordi del piano - calcolo dei punti
     for (int j = 0; j < length; j++) {
         plane[index].x = -offset + j;
         plane[index].y = 1;
         plane[index].z = offset;
-        DrawPoint(renderer, &plane[index]);
         index++;
     }
 
@@ -65,7 +63,6 @@ void DrawPlane(SDL_Renderer *renderer, int length)
         plane[index].x = -offset;
         plane[index].y = 1;
         plane[index].z = -offset + j;
-        DrawPoint(renderer, &plane[index]);
         index++;
     }
 
@@ -73,7 +70,6 @@ void DrawPlane(SDL_Renderer *renderer, int length)
         plane[index].x = -offset + j;
         plane[index].y = 1;
         plane[index].z = -offset;
-        DrawPoint(renderer, &plane[index]);
         index++;
     }
 
@@ -81,28 +77,52 @@ void DrawPlane(SDL_Renderer *renderer, int length)
         plane[index].x = offset;
         plane[index].y = 1;
         plane[index].z = -offset + j;
-        DrawPoint(renderer, &plane[index]);
         index++;
     }
 
-    // Spostamento rispetto al centro
+    // Applicazione trasformazioni (traslazione e rotazione) PRIMA del disegno
     for (int i = 0; i < 4 * length; i++) {
+        // Traslazione
         plane[i].x += center.x;
         plane[i].y += center.y;
         plane[i].z += center.z;
         
+        float x_temp, y_temp, z_temp;
+
         // Rotazione asse X
-        float y_temp = plane[i].y;
-        float z_temp = plane[i].z;
+        y_temp = plane[i].y;
+        z_temp = plane[i].z;
         plane[i].y = y_temp * cos(theta_plane_x) - z_temp * sin(theta_plane_x);
         plane[i].z = y_temp * sin(theta_plane_x) + z_temp * cos(theta_plane_x);
 
         // Rotazione asse Z
-        float x_temp = plane[i].x;
-        float y_temp2 = plane[i].y;
-        plane[i].x = x_temp * cos(theta_plane_z) - y_temp2 * sin(theta_plane_z);
-        plane[i].y = x_temp * sin(theta_plane_z) + y_temp2 * cos(theta_plane_z);
+        x_temp = plane[i].x;
+        y_temp = plane[i].y;
+        plane[i].x = x_temp * cos(theta_plane_z) - y_temp * sin(theta_plane_z);
+        plane[i].y = x_temp * sin(theta_plane_z) + y_temp * cos(theta_plane_z);
+
+        // Rotazione asse Y
+        x_temp = plane[i].x;
+        z_temp = plane[i].z;
+        plane[i].x = x_temp * cos(theta_plane_y) + z_temp * sin(theta_plane_y);
+        plane[i].z = -x_temp * sin(theta_plane_y) + z_temp * cos(theta_plane_y);
+    }
+
+    // Disegno dopo aver trasformato i punti
+    for (int i = 0; i < 4 * length; i++) {
+        DrawPoint(renderer, &plane[i]);
     }
 
     free(plane);
 }
+
+/*
+void collision(Point *plane, Point *sphere)
+{
+    int number_points_sphere = sizeof(sphere)/sizeof(Point);
+
+    for(int i=0; i<number_points_sphere;i++){
+
+    }
+}*/
+

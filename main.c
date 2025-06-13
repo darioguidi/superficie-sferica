@@ -1,19 +1,17 @@
 #include "function.h"
 
-float phi = 0.0f;
-float theta = 0.0f;
-
-float phi_plane = 0.0f;
-float theta_plane = 0.0f;
+float phi_sphere = 0.0f;
+float theta_sphere = 0.0f;
 
 float theta_plane_x = 0.0f;
+float theta_plane_y = 0.0f;
 float theta_plane_z = 0.0f;
 
 int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    
+
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Errore creazione del sdl\n");
         return 1;
@@ -65,45 +63,52 @@ int main(int argc, char *argv[])
             }
             // Esempio di rotazione:
             else if(event.type == SDL_KEYDOWN){
-                if(event.key.keysym.sym == SDLK_LEFT) theta -= 0.1f;
-                if(event.key.keysym.sym == SDLK_RIGHT) theta += 0.1f;
-                if(event.key.keysym.sym == SDLK_UP) phi -= 0.1f;
-                if(event.key.keysym.sym == SDLK_DOWN) phi += 0.1f;
-                if(event.key.keysym.sym == SDLK_LEFT && event.key.keysym.sym == SDLK_DOWN){
-                    theta -=0.1f;
-                    phi +=0.1f;
-                } 
-                if(event.key.keysym.sym == SDLK_UP && event.key.keysym.sym == SDLK_RIGHT){
-                    theta += 0.1f;
-                    phi -= 0.1f;
-                } 
-                if(event.key.keysym.sym == SDLK_LEFT && event.key.keysym.sym == SDLK_DOWN){
-                    theta -=0.1f;
-                    phi +=0.1f;
-                } 
 
                 // Rotazione piano asse X
-                if(event.key.keysym.sym == SDLK_a){   // A per ruotare piano attorno a X negativa
+                if(event.key.keysym.sym == SDLK_s){   
                     theta_plane_x -= 0.1f;
                 }
-                if(event.key.keysym.sym == SDLK_d){   // D per ruotare piano attorno a X positiva
+                if(event.key.keysym.sym == SDLK_w){  
                     theta_plane_x += 0.1f;
                 }
 
-                // Rotazione piano asse Z (aggiunta)
-                if(event.key.keysym.sym == SDLK_w){   // W per ruotare piano attorno a Z positiva
+                // Rotazione piano asse Z 
+                if(event.key.keysym.sym == SDLK_e){   
                     theta_plane_z += 0.1f;
                 }
-                if(event.key.keysym.sym == SDLK_s){   // S per ruotare piano attorno a Z negativa
+                if(event.key.keysym.sym == SDLK_q){   
                     theta_plane_z -= 0.1f;
                 }
+                
+                // Rotazione piano asse Y 
+                if(event.key.keysym.sym == SDLK_d){   
+                    theta_plane_y += 0.1f;
+                }
+                if(event.key.keysym.sym == SDLK_a){   
+                    theta_plane_y -= 0.1f;
+                }
+
+                if(event.key.keysym.sym == SDLK_UP){   
+                    theta_sphere += 0.1f;
+                }
+                if(event.key.keysym.sym == SDLK_DOWN){   
+                    theta_sphere -= 0.1f;
+                }
+
+                if(event.key.keysym.sym == SDLK_RIGHT){   
+                    phi_sphere += 0.1f;
+                }
+                if(event.key.keysym.sym == SDLK_LEFT){   
+                    phi_sphere -= 0.1f;
+                }
+
             }
         }
 
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderClear(renderer);
-        DrawSurface(renderer, number_points_sphere, radius);
-        DrawPlane(renderer, length_plane);
+        DrawSurface(renderer, number_points_sphere, radius, phi_sphere, theta_sphere);
+        DrawPlane(renderer, length_plane, theta_plane_x, theta_plane_y, theta_plane_z);
         SDL_RenderPresent(renderer);
     }
 
